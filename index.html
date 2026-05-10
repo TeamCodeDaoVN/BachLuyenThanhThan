@@ -113,13 +113,10 @@
         const user = "TeamCodeDaoVN";
         const repo = "BachLuyenThanhThan";
 
-        // Hàm tải nội dung thư mục
         async function loadFolder(path) {
             const listElement = document.getElementById('file-list');
             const breadcrumb = document.getElementById('breadcrumb');
             listElement.innerHTML = "Đang tải...";
-
-            // Cập nhật Breadcrumb
             breadcrumb.innerHTML = `Đang ở: <a onclick="loadFolder('')">Root</a> / ${path}`;
 
             const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
@@ -129,38 +126,46 @@
                 const data = await res.json();
 
                 listElement.innerHTML = "";
+                let allLinks = []; // Mảng chứa tất cả link trong folder hiện tại
 
-                // Sắp xếp: Thư mục lên trước, file sau
                 data.sort((a, b) => (b.type === 'dir') - (a.type === 'dir'));
+
+                // Tạo ô tổng hợp ở trên cùng
+                const bulkContainer = document.createElement('div');
+                bulkContainer.style = "background: #fff3cd; padding: 15px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ffeeba;";
+                bulkContainer.innerHTML = `<strong>Tổng hợp link trong thư mục này:</strong><br>
+                                           <textarea id="bulk-textarea" style="width:100%; height:80px; margin-top:5px; font-family:monospace; font-size:12px;"></textarea>
+                                           <button class="btn-copy" style="margin: 5px 0 0 0" onclick="copyToClipboard('bulk-textarea')">Copy tất cả (dấu phẩy)</button>`;
+                listElement.appendChild(bulkContainer);
 
                 data.forEach(item => {
                     const itemDiv = document.createElement('div');
                     itemDiv.className = 'item';
 
                     if (item.type === 'dir') {
-                        // Giao diện cho Thư mục
-                        itemDiv.innerHTML = `
-                            <span class="item-icon folder">📁</span>
-                            <div class="item-info">
-                                <span class="item-name" onclick="loadFolder('${item.path}')">${item.name}/</span>
-                            </div>
-                        `;
+                        itemDiv.innerHTML = `<span class="item-icon folder">📁</span><div class="item-info"><span class="item-name" onclick="loadFolder('${item.path}')">${item.name}/</span></div>`;
                     } else if (item.name.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i)) {
-                        // Giao diện cho File Ảnh - Gắn link jsDelivr
-                        const cdnLink = `https://cdn.jsdelivr.net/gh/${user}/${repo}@main/${item.path}`;
+                        // Link format bạn yêu cầu: User/Repo@Branch/Path
+                        const cdnLink = `${user}/${repo}@main/${item.path}`;
+                        allLinks.push(cdnLink);
+
                         itemDiv.innerHTML = `
                             <span class="item-icon">🖼️</span>
                             <div class="item-info">
-                                <span class="item-name" onclick="window.open('${cdnLink}', '_blank')">${item.name}</span>
+                                <span class="item-name" onclick="window.open('https://cdn.jsdelivr.net/gh/${cdnLink}', '_blank')">${item.name}</span>
                                 <input type="text" class="cdn-link" value="${cdnLink}" id="input-${item.sha}" readonly>
                             </div>
-                            <button class="btn-copy" onclick="copyToClipboard('input-${item.sha}')">Copy Link</button>
+                            <button class="btn-copy" onclick="copyToClipboard('input-${item.sha}')">Copy</button>
                         `;
                     }
                     listElement.appendChild(itemDiv);
                 });
+
+                // Đổ dữ liệu vào ô tổng hợp
+                document.getElementById('bulk-textarea').value = allLinks.join(',');
+
             } catch (error) {
-                listElement.innerHTML = "<span style='color:red'>Lỗi khi tải dữ liệu. Hãy kiểm tra lại Repo hoặc quyền truy cập.</span>";
+                listElement.innerHTML = "<span style='color:red'>Lỗi khi tải dữ liệu.</span>";
             }
         }
 
@@ -168,10 +173,13 @@
             const copyText = document.getElementById(id);
             copyText.select();
             document.execCommand("copy");
-            alert("Đã copy link jsDelivr!");
+            // Thông báo nhẹ nhàng
+            const btn = event.target;
+            const oldText = btn.innerText;
+            btn.innerText = "Đã copy!";
+            setTimeout(() => btn.innerText = oldText, 2000);
         }
 
-        // Khởi tạo trang với thư mục gốc
         loadFolder('');
     </script>
 
