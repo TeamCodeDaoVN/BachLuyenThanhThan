@@ -8,11 +8,11 @@
     <ul id="link-list"></ul>
 
     <script>
-    // Thay thông tin của bạn vào đây
+        // Thay thông tin của bạn vào đây
         const user = "MeoHip";
         const repo = "BachLuyenThanhThan";
         const branch = "main";
-        const folder = "TuDieuLinh"; // Tên thư mục chứa ảnh của bạn
+        const folder = "TuDieuLinh/09_05_2026"; // Tên thư mục chứa ảnh của bạn
 
         // GitHub API để lấy danh sách file trong thư mục
         const url = `https://api.github.com/repos/${user}/${repo}/contents/${folder}`;
@@ -26,8 +26,8 @@
                         const directLink = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${folder}/${file.name}`;
                         const li = document.createElement('li');
                         li.innerHTML = `<strong>${file.name}:</strong> <br>
-                                            <input type="text" value="${directLink}" style="width:80%" readonly>
-                                            <button onclick="navigator.clipboard.writeText('${directLink}')">Copy</button>`;
+                                                <input type="text" value="${directLink}" style="width:80%" readonly>
+                                                <button onclick="navigator.clipboard.writeText('${directLink}')">Copy</button>`;
                         list.appendChild(li);
                     }
                 });
