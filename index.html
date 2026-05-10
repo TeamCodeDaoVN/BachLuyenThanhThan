@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Danh sách link ảnh GitHub</title>
+</head>
+<body>
+    <h1>Direct Links cho ảnh trong thư mục /images</h1>
+    <ul id="link-list"></ul>
+
+    <script>// Thay thông tin của bạn vào đây
+        const user = "DoThanhChung";
+        const repo = "BachLuyenThanhThan";
+        const branch = "main";
+        const folder = "images"; // Tên thư mục chứa ảnh của bạn
+
+        // GitHub API để lấy danh sách file trong thư mục
+        const url = `https://api.github.com/repos/${user}/${repo}/contents/${folder}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const list = document.getElementById('link-list');
+                data.forEach(file => {
+                    if (file.type === 'file') {
+                        const directLink = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${folder}/${file.name}`;
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${file.name}:</strong> <br>
+                                        <input type="text" value="${directLink}" style="width:80%" readonly>
+                                        <button onclick="navigator.clipboard.writeText('${directLink}')">Copy</button>`;
+                        list.appendChild(li);
+                    }
+                });
+            });</script>
+</body>
+</html>
