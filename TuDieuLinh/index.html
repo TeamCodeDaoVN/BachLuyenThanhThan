@@ -7,8 +7,7 @@
     <h1>Direct Links cho ảnh trong thư mục /images</h1>
     <ul id="link-list"></ul>
 
-    <script>
-    // Thay thông tin của bạn vào đây
+    <script>// Thay thông tin của bạn vào đây
         const user = "MeoHip";
         const repo = "BachLuyenThanhThan";
         const branch = "main";
@@ -26,8 +25,8 @@
                         const directLink = `https://raw.githubusercontent.com/${user}/${repo}/${branch}/${folder}/${file.name}`;
                         const li = document.createElement('li');
                         li.innerHTML = `<strong>${file.name}:</strong> <br>
-                                            <input type="text" value="${directLink}" style="width:80%" readonly>
-                                            <button onclick="navigator.clipboard.writeText('${directLink}')">Copy</button>`;
+                                        <input type="text" value="${directLink}" style="width:80%" readonly>
+                                        <button onclick="navigator.clipboard.writeText('${directLink}')">Copy</button>`;
                         list.appendChild(li);
                     }
                 });
